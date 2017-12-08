@@ -53,17 +53,21 @@ public class Client {
     }
 
     public void comunicate() {
+
+        int card[][] = new int[3][5];
+
         try {
 
-            int card[][] = new int[3][5];
+            String[] numbers = inFromServer.readLine().split("|");
             List<Integer> list = new ArrayList<Integer>();
 
             // riempimento cartella della tombola con i numeri ricevuti dal server
+            int val = 0;
             for (int i = 0; i < 3; i++) {
                 for (int k = 0; k < 5; k++) {
-                    //card[i][k] = inFromServer.read();
-                    card[i][k] = new Random().nextInt((90 - 1) + 1) + 1;
+                    card[i][k] = Integer.parseInt(numbers[val]);
                     list.add(card[i][k]);
+                    val++;
                 }
             }
 
@@ -77,10 +81,10 @@ public class Client {
 
             // ordinamento della cartella
             Collections.sort(list);
-            
-            int val = 0;
-            for(int i = 0; i < 3; i++){
-                for(int k = 0; k < 5; k++){
+
+            val = 0;
+            for (int i = 0; i < 3; i++) {
+                for (int k = 0; k < 5; k++) {
                     card[i][k] = list.get(val);
                     val++;
                 }
