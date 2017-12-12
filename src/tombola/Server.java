@@ -10,7 +10,5 @@ package tombola;
  * @author davidgaetani
  */
 public class Server {
-    public void start(){
-       
-    }
+
 }
