@@ -43,8 +43,16 @@ public class Server extends Thread {
         outVersoClient = new DataOutputStream(client.getOutputStream());
         try{
             String[] casella = generaCasella();
-            String numeriCasella = String.join(casella, ",");
+            
             //Genero la casella
+            
+            // +++ DOPO AVER GENERATO LA CASELLA +++
+            String arrayToString = "";
+            for(int i = 0; i < casella.length; i++){
+                arrayToString += casella[i] + "|";
+            }
+            
+            System.out.println(arrayToString);
             
             /*
             Boolean t = true;
@@ -64,7 +72,7 @@ public class Server extends Thread {
                 }
             }while(t);
             */
-        }catch(IOException e){
+        }catch(Exception e){
             System.out.println(e.getMessage());
             System.out.println("Errore");
             System.exit(1);
