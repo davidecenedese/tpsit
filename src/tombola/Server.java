@@ -12,44 +12,55 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Server extends Thread {
 
     ServerSocket server = null;
     Socket client = null;
-    String stringaRicevuta = null;
-    String stringaModificata = null;
-    BufferedReader inDalClient;
-    DataOutputStream outVersoClient;
-    String stringaServer = null;
-    BufferedReader tastiera;
-
+    String recivedString = null;
+    String modificatedString = null;
+    BufferedReader inFromClient;
+    DataOutputStream outToClient;
+    String serverString = null;
+    BufferedReader keyboard;
+    List<String> list;
+    
     public Server(Socket socket) {
         this.client = socket;
+        this.list = new ArrayList<>();
     }
 
     @Override
     public void run() {
         try {
-            comunica();
+            comunicate();
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }
     }
 
-    public void comunica() throws Exception {
-        inDalClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        outVersoClient = new DataOutputStream(client.getOutputStream());
+    public void comunicate() throws Exception {
+        inFromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        outToClient = new DataOutputStream(client.getOutputStream());
         try{
-            String[] casella = generaCasella();
+            /*
+            //controllo che non ci siano caselle generate in precedenza uguali a quella appena generata
+            boolean equalBoxes = true;
+            do{
+                
+            }while(equalBoxes);
+            */
             
             //Genero la casella
-            
+            int[] box = generateBox();
+
             // +++ DOPO AVER GENERATO LA CASELLA +++
             String arrayToString = "";
-            for(int i = 0; i < casella.length; i++){
-                arrayToString += casella[i] + "|";
+            for(int i = 0; i < box.length; i++){
+                arrayToString += box[i] + "|";
             }
             
             System.out.println(arrayToString);
@@ -79,18 +90,52 @@ public class Server extends Thread {
         }
     }
     
-    public String[] generaCasella(){
-        String[] casella = new String[15];
+    public int[] generateBox(){
+        int[] box = new int[15];
+        //String[] box = new String[15];
         Random rand = new Random();
+        
         int i = 0;
+        //Genero i numeri casuali
         while(i < 15){
-            casella[i] = Integer.toString(rand.nextInt(90) + 1);
-            for(int j = 0; j <= i; j++){
-                if(!casella[j].equals(casella[i])){
-                    i++;
-                } 
+            box[i] = rand.nextInt(90) + 1;
+            //verifico che non ce ne siano di uguali nella stessa casella
+            i = controlEqualNumbers(box, box[i], i); 
+        }
+        //Riordino in modo crescente i numeri della casella
+        bubbleSort(box);        
+        return box;
+    }
+    
+    public int controlEqualNumbers(int[] temp, int num, int i){
+        boolean different = true;
+        int j = 0;
+        while(j <= i && different == true){
+            if(temp[j] != num){
+                different = true;
+                j++;
+            } else {
+                different = false;
             }
         }
-        return casella;
+        if(different == true){
+            i++;
+        }    
+        return i;
+    }
+    
+    public void bubbleSort(int[] numbers) {
+        int temp = 0;
+        int j = numbers.length-1;
+        while(j>0) {
+            for(int i=0; i<j; i++) {
+                if(numbers[i]>numbers[i+1]){
+                    temp=numbers[i]; 
+                    numbers[i]=numbers[i+1];
+                    numbers[i+1]=temp;
+                }
+            }
+            j--; 
+        }
     }
 }
