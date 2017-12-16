@@ -13,15 +13,13 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-
 /**
  *
  * @author Davide Cenedese
  */
 public class Client {
 
-    String serverName = "127.0.0.1";
+    String serverName = "192.168.5.69";
     int serverPort = 6789;
     Socket socket;
     BufferedReader keyboard;
@@ -65,9 +63,12 @@ public class Client {
             int val = 0;
             for (int i = 0; i < 3; i++) {
                 for (int k = 0; k < 5; k++) {
+                    if(numbers[val].equals("") || numbers[val].equals("|")){
+                        //numbers = ArrayUtils.removeElement(numbers, numbers[val]);
+                    }
                     card[i][k] = Integer.parseInt(numbers[val]);
                     list.add(card[i][k]);
-                    val++;
+                    val += 2;
                 }
             }
 
