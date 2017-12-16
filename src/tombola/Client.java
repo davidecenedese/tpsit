@@ -56,42 +56,20 @@ public class Client {
 
         try {
 
-            String[] numbers = inFromServer.readLine().split("|");
+            String[] numbers = inFromServer.readLine().split("\\.");
             List<Integer> list = new ArrayList<Integer>();
 
             // riempimento cartella della tombola con i numeri ricevuti dal server
             int val = 0;
             for (int i = 0; i < 3; i++) {
                 for (int k = 0; k < 5; k++) {
-                    if(numbers[val].equals("") || numbers[val].equals("|")){
-                        //numbers = ArrayUtils.removeElement(numbers, numbers[val]);
-                    }
                     card[i][k] = Integer.parseInt(numbers[val]);
                     list.add(card[i][k]);
-                    val += 2;
-                }
-            }
-
-            System.out.println("NON ORDINATO");
-            for (int i = 0; i < 3; i++) {
-                for (int k = 0; k < 5; k++) {
-                    System.out.print("[" + card[i][k] + "]");
-                }
-                System.out.println("");
-            }
-
-            // ordinamento della cartella
-            Collections.sort(list);
-
-            val = 0;
-            for (int i = 0; i < 3; i++) {
-                for (int k = 0; k < 5; k++) {
-                    card[i][k] = list.get(val);
                     val++;
                 }
             }
 
-            System.out.println("ORDINATO");
+            System.out.println("CARTELLA");
             for (int i = 0; i < 3; i++) {
                 for (int k = 0; k < 5; k++) {
                     System.out.print("[" + card[i][k] + "]");
