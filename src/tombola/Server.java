@@ -56,7 +56,7 @@ public class Server extends Thread implements Runnable{
                 // +++ DOPO AVER GENERATO LA CASELLA +++
                 arrayToString = "";
                 for(int i = 0; i < box.length; i++){
-                    arrayToString += box[i] + "|";
+                    arrayToString += box[i] + ".";
                 }
                 if(firstBox == true){
                     equalBoxes = false;
