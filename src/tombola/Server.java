@@ -25,10 +25,12 @@ public class Server extends Thread implements Runnable{
     String serverString = null;
     BufferedReader keyboard;
     List<String> list;
+    Boolean firstBox;
     
     public Server(Socket socket) {
         this.client = socket;
         this.list = new ArrayList<>();
+        firstBox = true;
     }
 
     @Override
@@ -44,24 +46,34 @@ public class Server extends Thread implements Runnable{
         inFromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
         outToClient = new DataOutputStream(client.getOutputStream());
         try{
-            /*
+            String arrayToString;
             //controllo che non ci siano caselle generate in precedenza uguali a quella appena generata
             boolean equalBoxes = true;
             do{
-                
-            }while(equalBoxes);
-            */
-            
-            //Genero la casella
-            int[] box = generateBox();
+                //Genero la casella
+                int[] box = generateBox();
 
-            // +++ DOPO AVER GENERATO LA CASELLA +++
-            String arrayToString = "";
-            for(int i = 0; i < box.length; i++){
-                arrayToString += box[i] + "|";
-            }
-            
+                // +++ DOPO AVER GENERATO LA CASELLA +++
+                arrayToString = "";
+                for(int i = 0; i < box.length; i++){
+                    arrayToString += box[i] + "|";
+                }
+                if(firstBox == true){
+                    equalBoxes = false;
+                    firstBox = false;
+                }else{
+                    for(int i = 0; i < list.size(); i++){
+                        equalBoxes = list.get(i).equals(arrayToString); 
+                        if(equalBoxes == true){
+                            break;
+                        }
+                    }
+                }
+            }while(equalBoxes);
+            //aggiungo casella alla lista
+            list.add(arrayToString);
             System.out.println(arrayToString);
+            //invio la casella al client
             outToClient.writeBytes(arrayToString + '\n');
             /*
             Boolean t = true;
