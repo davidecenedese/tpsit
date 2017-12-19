@@ -15,9 +15,10 @@ import java.net.Socket;
  */
 public class MainServer {
 
-    public void start() throws Exception{
+    public void start() throws Exception {
         try {
             ServerSocket serverSocket = new ServerSocket(6789);
+            int giocatori = 0;
 
             /*final int secondi = 0;
             new Runnable() {
@@ -27,13 +28,21 @@ public class MainServer {
                     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 }
             };*/
+            
+
             while (true) {
                 System.out.println("1 Server in attesa...");
                 Socket socket = serverSocket.accept();
                 System.out.println("3 Server socket " + socket);
                 Server serverThread = new Server(socket);
                 serverThread.start();
+                
             }
+            /*
+            while(serverThread.extractNumber() != -1){
+                
+            }*/
+            
         } catch (IOException e) {
             System.out.println(e.getMessage());
             System.out.println("Errore durante l'istanza del server");
