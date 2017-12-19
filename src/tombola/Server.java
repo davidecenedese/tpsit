@@ -7,12 +7,15 @@ package tombola;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Server extends Thread implements Runnable{
 
@@ -26,11 +29,15 @@ public class Server extends Thread implements Runnable{
     BufferedReader keyboard;
     List<String> list;
     Boolean firstBox;
+    int nBoxes;
+    int[] numbers;
     
     public Server(Socket socket) {
         this.client = socket;
         this.list = new ArrayList<>();
         firstBox = true;
+        nBoxes = 0;
+        numbers = new int[90];
     }
 
     @Override
@@ -72,7 +79,7 @@ public class Server extends Thread implements Runnable{
             }while(equalBoxes);
             //aggiungo casella alla lista
             list.add(arrayToString);
-            System.out.println(arrayToString);
+            System.out.println(++nBoxes + ": " +arrayToString);
             //invio la casella al client
             outToClient.writeBytes(arrayToString + '\n');
             /*
@@ -120,17 +127,17 @@ public class Server extends Thread implements Runnable{
     public int controlEqualNumbers(int[] temp, int num, int i){
         boolean different = true;
         int j = 0;
-        while(j <= i && different == true){
+        while(j < i && different == true){
             if(temp[j] != num){
                 different = true;
                 j++;
             } else {
                 different = false;
             }
-        }
-        if(different == false){
+        }  
+        if(different == true){
             i++;
-        }    
+        }
         return i;
     }
     
@@ -147,5 +154,21 @@ public class Server extends Thread implements Runnable{
             }
             j--; 
         }
+    }
+ 
+    public int extractNumber(){
+        int number;
+        Random rand = new Random();
+        number = rand.nextInt(90) + 1;
+        if(numbers[number-1] == 0){
+            numbers[number-1] = number;
+            try {
+                outToClient.write(number);
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return number;
     }
 }
