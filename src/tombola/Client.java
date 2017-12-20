@@ -7,19 +7,22 @@ package tombola;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Davide Cenedese
  */
 public class Client {
 
-    String serverName = "192.168.5.69";
+    String serverName = "localhost";
     int serverPort = 6789;
     Socket socket;
     BufferedReader keyboard;
@@ -27,6 +30,8 @@ public class Client {
     String stringFromServer;
     DataOutputStream outToServer;
     BufferedReader inFromServer;
+    
+    int card[][];
 
     public Socket connect() {
 
@@ -50,9 +55,9 @@ public class Client {
 
     }
 
-    public void comunicate() {
+    public void receiveCard() {
 
-        int card[][] = new int[3][5];
+        card = new int[3][5];
 
         try {
 
@@ -83,4 +88,13 @@ public class Client {
             System.exit(1);
         }
     }
+    
+    public void receiveNumbers(){
+        
+        try {
+            inFromServer.read();
+        } catch (IOException ignored) {}
+        
+    }
+    
 }
