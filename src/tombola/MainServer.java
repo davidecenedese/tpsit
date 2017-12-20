@@ -26,19 +26,19 @@ public class MainServer {
             ServerSocket serverSocket = new ServerSocket(6789);
 
             while (clients.size() < 1) {
-                System.out.println("1 Server in attesa...");
+                System.out.println("Server in attesa...");
                 socket = serverSocket.accept();
                 clients.add(socket);
-                System.out.println("3 Server socket " + socket);
+                System.out.println("Server socket " + socket);
                 serverThread = new Server(socket);
                 serverThread.start();
-                
+                serverThread.join();
             }
             
-            int randomNumner = 0;
-            while((randomNumner = serverThread.extractNumber(clients)) != -1){
-                Thread.sleep(1000);
-                System.out.println(randomNumner);
+            int randomNumber = 0;
+            while((randomNumber = serverThread.extractNumber(clients)) != -1){
+                System.out.println(randomNumber);
+                Thread.sleep(1500);
             }
             
         } catch (IOException e) {
