@@ -19,7 +19,6 @@ public class MainClient {
         Client client = new Client();
         client.connect();
         client.comunicate();
-        //comment
     }
 
 }
