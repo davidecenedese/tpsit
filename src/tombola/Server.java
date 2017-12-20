@@ -79,7 +79,7 @@ public class Server extends Thread implements Runnable{
             }while(equalBoxes);
             //aggiungo casella alla lista
             list.add(arrayToString);
-            System.out.println(++nBoxes + ": " +arrayToString);
+            System.out.println(++nBoxes + ": " + arrayToString);
             //invio la casella al client
             outToClient.writeBytes(arrayToString + '\n');
             /*
