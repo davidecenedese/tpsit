@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 /**
  *
  * @author Davide Cenedese
@@ -30,7 +31,7 @@ public class Client {
     String stringFromServer;
     DataOutputStream outToServer;
     BufferedReader inFromServer;
-    
+
     int card[][];
 
     public Socket connect() {
@@ -88,13 +89,17 @@ public class Client {
             System.exit(1);
         }
     }
-    
-    public void receiveNumbers(){
-        
+
+    public void receiveNumbers() {
+
         try {
-            inFromServer.read();
-        } catch (IOException ignored) {}
-        
+            while (!inFromServer.readLine().equals("FINE")) {
+                int randomNumber = Integer.parseInt(inFromServer.readLine());
+                System.out.println(randomNumber);
+            }
+        } catch (IOException ignored) {
+        }
+
     }
-    
+
 }
