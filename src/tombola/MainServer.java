@@ -47,6 +47,7 @@ public class MainServer {
             
             int randomNumner = 0;
             while((randomNumner = serverThread.extractNumber(clients)) != -1){
+                Thread.sleep(1000);
                 System.out.println(randomNumner);
             }
             
