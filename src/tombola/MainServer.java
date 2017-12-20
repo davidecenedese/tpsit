@@ -25,16 +25,6 @@ public class MainServer {
         try {
             ServerSocket serverSocket = new ServerSocket(6789);
 
-            /*final int secondi = 0;
-            new Runnable() {
-                @Override
-                public void run() {
-                    secondi++;
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                }
-            };*/
-            
-
             while (clients.size() < 1) {
                 System.out.println("1 Server in attesa...");
                 socket = serverSocket.accept();
