@@ -8,6 +8,8 @@ package tombola;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -15,10 +17,13 @@ import java.net.Socket;
  */
 public class MainServer {
 
+    Socket socket;
+    Server serverThread;
+    List<Socket> clients = new ArrayList<>();
+    
     public void start() throws Exception {
         try {
             ServerSocket serverSocket = new ServerSocket(6789);
-            int giocatori = 0;
 
             /*final int secondi = 0;
             new Runnable() {
@@ -30,18 +35,20 @@ public class MainServer {
             };*/
             
 
-            while (true) {
+            while (clients.size() < 1) {
                 System.out.println("1 Server in attesa...");
-                Socket socket = serverSocket.accept();
+                socket = serverSocket.accept();
+                clients.add(socket);
                 System.out.println("3 Server socket " + socket);
-                Server serverThread = new Server(socket);
+                serverThread = new Server(socket);
                 serverThread.start();
                 
             }
-            /*
-            while(serverThread.extractNumber() != -1){
-                
-            }*/
+            
+            int randomNumner = 0;
+            while((randomNumner = serverThread.extractNumber(clients)) != -1){
+                System.out.println(randomNumner);
+            }
             
         } catch (IOException e) {
             System.out.println(e.getMessage());
