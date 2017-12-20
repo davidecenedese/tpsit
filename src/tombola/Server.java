@@ -156,16 +156,19 @@ public class Server extends Thread implements Runnable{
         }
     }
  
-    public int extractNumber(){
+    public int extractNumber(List<Socket> clients){
         int number;
         Random rand = new Random();
         number = rand.nextInt(90) + 1;
         if(numbers[number-1] == 0){
             numbers[number-1] = number;
             try {
-                outToClient.write(number);
+                for(Socket client : clients){
+                    outToClient = new DataOutputStream(client.getOutputStream());
+                    outToClient.writeBytes(String.valueOf(number) + "\n");
+                }
             } catch (IOException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Qualcosa è andato storto :(");
             }
         }
         
