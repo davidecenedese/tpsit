@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Davide Cenedese
+ * @author Davide Cenedese Simone Stella
  */
 public class Client {
 
