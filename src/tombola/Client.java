@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tombola;
 
 import java.io.BufferedReader;
@@ -12,14 +7,13 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
- * @author Davide Cenedese Simone Stella
+ * @authors Cenedese, Stella
  */
 public class Client {
 
@@ -92,14 +86,16 @@ public class Client {
 
     public void receiveNumbers() {
 
+        String inFromServerString;
         try {
-            while (!inFromServer.readLine().equals("FINE")) {
-                int randomNumber = Integer.parseInt(inFromServer.readLine());
+            inFromServerString = inFromServer.readLine();
+            while (!inFromServerString.equals("FINE")) {
+                int randomNumber = Integer.parseInt(inFromServerString);
                 System.out.println(randomNumber);
             }
-        } catch (IOException ignored) {
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
 }
