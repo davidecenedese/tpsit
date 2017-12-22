@@ -28,6 +28,7 @@ public class Client {
 
     int[] firstWin = new int[4];
     String card[][];
+    boolean bingo = false;
 
     public Socket connect() {
 
@@ -78,6 +79,9 @@ public class Client {
                 checkNumber(randomNumber);
                 printCard();
                 System.out.print(checkWin());
+                if(bingo == true){
+                    System.exit(0);
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -148,6 +152,7 @@ public class Client {
         }
 
         if (bingo == 15) {
+            this.bingo = true;
             return "*** TOMBOLA ***\n\n";
         } else {
             bingo = 0;
