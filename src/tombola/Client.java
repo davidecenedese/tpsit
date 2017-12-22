@@ -55,7 +55,6 @@ public class Client {
         card = new String[3][5];
 
         try {
-
             String[] numbers = inFromServer.readLine().split("\\.");
 
             sortCard(numbers);
@@ -85,7 +84,6 @@ public class Client {
 
     public void sortCard(String[] numbers) {
         List<String> list = new ArrayList<>();
-
         int val = 0;
         for (int i = 0; i < 3; i++) {
             for (int k = 0; k < 5; k++) {
