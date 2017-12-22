@@ -86,15 +86,17 @@ public class Client {
 
     public void receiveNumbers() {
 
-        String inFromServerString;
         try {
-            inFromServerString = inFromServer.readLine();
-            while (!inFromServerString.equals("FINE")) {
+            String inFromServerString;
+            while (!(inFromServerString = inFromServer.readLine()).equals("FINE")) {
                 int randomNumber = Integer.parseInt(inFromServerString);
                 System.out.println(randomNumber);
             }
+            Thread.sleep(1000);
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
     }
 
