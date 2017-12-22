@@ -25,6 +25,7 @@ public class Client {
     String stringFromServer;
     DataOutputStream outToServer;
     BufferedReader inFromServer;
+    int[] firstWin = new int[3];
 
     String card[][];
 
@@ -76,6 +77,7 @@ public class Client {
                 System.out.println("Numero estratto: " + randomNumber);
                 checkNumber(randomNumber);
                 printCard();
+                System.out.print(checkWin());
             }
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -94,21 +96,54 @@ public class Client {
         }
     }
 
-    public void checkNumber(int number){
+    public void checkNumber(int number) {
         for (int i = 0; i < 3; i++) {
             for (int k = 0; k < 5; k++) {
-                if(card[i][k].equals(String.valueOf(number))){
+                if (card[i][k].equals(String.valueOf(number))) {
                     card[i][k] = "X";
                 }
             }
         }
     }
-    
+
+    public String checkWin() {
+        int count = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int k = 0; k < 5; k++) {
+                if (card[i][k].equals("X")) {
+                    count++;
+                }
+            }
+
+            switch (count) {
+                case 2:
+                    firstWin[0]++;
+                    if (firstWin[0] == 1) {
+                        return "AMBO\n\n";
+                    }
+                case 3:
+                    firstWin[1]++;
+                    if (firstWin[1] == 1) {
+                        return "TERNA\n\n";
+                    }
+                case 4:
+                    firstWin[2]++;
+                    if (firstWin[2] == 1) {
+                        return "QUATERNA\n\n";
+                    }
+            }
+
+            count = 0;
+            firstWin[0] = 0; firstWin[1] = 0; firstWin[2] = 0;
+        }
+        return "";
+    }
+
     public void printCard() {
         System.out.println("CARTELLA");
         for (int i = 0; i < 3; i++) {
             for (int k = 0; k < 5; k++) {
-                System.out.print("[" + (String.format( "%2s", card[i][k]))  + "]");
+                System.out.print("[" + (String.format("%2s", card[i][k])) + "]");
             }
             System.out.println("");
         }
