@@ -33,7 +33,7 @@ public class MainServer {
             int randomNumber = 0;
             while((randomNumber = serverThread.extractNumber(clients)) != -1){
                 System.out.println("Numero inviato: " + randomNumber);
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             }
             
         } catch (IOException e) {
