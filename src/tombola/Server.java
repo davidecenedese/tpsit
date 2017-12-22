@@ -14,7 +14,7 @@ import java.util.Random;
  *
  * @authors Cenedese, Stella
  */
-public class Server extends Thread implements Runnable{
+public class Server extends Thread implements Runnable {
 
     ServerSocket server = null;
     Socket client = null;
@@ -28,7 +28,7 @@ public class Server extends Thread implements Runnable{
     Boolean firstBox;
     int nBoxes;
     int[] numbers;
-    
+
     public Server(Socket socket) {
         this.client = socket;
         this.list = new ArrayList<>();
@@ -38,7 +38,7 @@ public class Server extends Thread implements Runnable{
     }
 
     @Override
-    public void run(){
+    public void run() {
         try {
             comunicate();
         } catch (Exception e) {
@@ -49,31 +49,31 @@ public class Server extends Thread implements Runnable{
     public void comunicate() throws Exception {
         inFromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
         outToClient = new DataOutputStream(client.getOutputStream());
-        try{
+        try {
             String arrayToString;
             //controllo che non ci siano caselle generate in precedenza uguali a quella appena generata
             boolean equalBoxes = true;
-            do{
+            do {
                 //Genero la casella
                 int[] box = generateBox();
 
                 // +++ DOPO AVER GENERATO LA CASELLA +++
                 arrayToString = "";
-                for(int i = 0; i < box.length; i++){
+                for (int i = 0; i < box.length; i++) {
                     arrayToString += box[i] + ".";
                 }
-                if(firstBox == true){
+                if (firstBox == true) {
                     equalBoxes = false;
                     firstBox = false;
-                }else{
-                    for(int i = 0; i < list.size(); i++){
-                        equalBoxes = list.get(i).equals(arrayToString); 
-                        if(equalBoxes == true){
+                } else {
+                    for (int i = 0; i < list.size(); i++) {
+                        equalBoxes = list.get(i).equals(arrayToString);
+                        if (equalBoxes == true) {
                             break;
                         }
                     }
                 }
-            }while(equalBoxes);
+            } while (equalBoxes);
             //aggiungo casella alla lista
             list.add(arrayToString);
             System.out.println(++nBoxes + ": " + arrayToString);
@@ -96,79 +96,79 @@ public class Server extends Thread implements Runnable{
                     client.close();
                 }
             }while(t);
-            */
-        }catch(Exception e){
+             */
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println("Errore");
             System.exit(1);
         }
     }
-    
-    public int[] generateBox(){
+
+    public int[] generateBox() {
         int[] box = new int[15];
         //String[] box = new String[15];
         Random rand = new Random();
-        
+
         int i = 0;
         //Genero i numeri casuali
-        while(i < 15){
+        while (i < 15) {
             box[i] = rand.nextInt(90) + 1;
             //verifico che non ce ne siano di uguali nella stessa casella
-            i = controlEqualNumbers(box, box[i], i); 
+            i = controlEqualNumbers(box, box[i], i);
         }
         //Riordino in modo crescente i numeri della casella
-        bubbleSort(box);        
+        bubbleSort(box);
         return box;
     }
-    
-    public int controlEqualNumbers(int[] temp, int num, int i){
+
+    public int controlEqualNumbers(int[] temp, int num, int i) {
         boolean different = true;
         int j = 0;
-        while(j < i && different == true){
-            if(temp[j] != num){
+        while (j < i && different == true) {
+            if (temp[j] != num) {
                 different = true;
                 j++;
             } else {
                 different = false;
             }
-        }  
-        if(different == true){
+        }
+        if (different == true) {
             i++;
         }
         return i;
     }
-    
+
     public void bubbleSort(int[] numbers) {
         int temp = 0;
-        int j = numbers.length-1;
-        while(j>0) {
-            for(int i=0; i<j; i++) {
-                if(numbers[i]>numbers[i+1]){
-                    temp=numbers[i]; 
-                    numbers[i]=numbers[i+1];
-                    numbers[i+1]=temp;
+        int j = numbers.length - 1;
+        while (j > 0) {
+            for (int i = 0; i < j; i++) {
+                if (numbers[i] > numbers[i + 1]) {
+                    temp = numbers[i];
+                    numbers[i] = numbers[i + 1];
+                    numbers[i + 1] = temp;
                 }
             }
-            j--; 
+            j--;
         }
     }
- 
-    public int extractNumber(List<Socket> clients){
+
+    public int extractNumber(List<Socket> clients) {
         int number;
         Random rand = new Random();
-        number = rand.nextInt(90) + 1;
-        if(numbers[number-1] == 0){
-            numbers[number-1] = number;
-            try {
-                for(Socket client : clients){
-                    outToClient = new DataOutputStream(client.getOutputStream());
-                    outToClient.writeBytes(String.valueOf(number) + "\n");
-                }
-            } catch (IOException ex) {
-                System.out.println("Client non raggiungibile");
-            }
-        }
+        while(numbers[(number = rand.nextInt(90) + 1)-1] != 0){}
         
+
+        numbers[number - 1] = number;
+        try {
+            for (Socket client : clients) {
+                outToClient = new DataOutputStream(client.getOutputStream());
+                outToClient.writeBytes(String.valueOf(number) + "\n");
+            }
+        } catch (IOException ex) {
+            System.out.println("Client non raggiungibile");
+        }
+
         return number;
     }
 }
