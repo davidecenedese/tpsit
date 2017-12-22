@@ -25,8 +25,8 @@ public class Client {
     String stringFromServer;
     DataOutputStream outToServer;
     BufferedReader inFromServer;
-    int[] firstWin = new int[3];
 
+    int[] firstWin = new int[4];
     String card[][];
 
     public Socket connect() {
@@ -108,10 +108,12 @@ public class Client {
 
     public String checkWin() {
         int count = 0;
+        int bingo = 0;
         for (int i = 0; i < 3; i++) {
             for (int k = 0; k < 5; k++) {
                 if (card[i][k].equals("X")) {
                     count++;
+                    bingo++;
                 }
             }
 
@@ -121,21 +123,36 @@ public class Client {
                     if (firstWin[0] == 1) {
                         return "AMBO\n\n";
                     }
+                    break;
                 case 3:
                     firstWin[1]++;
                     if (firstWin[1] == 1) {
                         return "TERNA\n\n";
                     }
+                    break;
                 case 4:
                     firstWin[2]++;
                     if (firstWin[2] == 1) {
                         return "QUATERNA\n\n";
                     }
+                    break;
+                case 5:
+                    firstWin[3]++;
+                    if (firstWin[3] == 1) {
+                        return "CINQUINA\n\n";
+                    }
+                    break;
             }
 
             count = 0;
-            firstWin[0] = 0; firstWin[1] = 0; firstWin[2] = 0;
         }
+
+        if (bingo == 15) {
+            return "*** TOMBOLA ***\n\n";
+        } else {
+            bingo = 0;
+        }
+        
         return "";
     }
 
