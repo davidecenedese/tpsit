@@ -165,7 +165,7 @@ public class Server extends Thread implements Runnable{
                     outToClient.writeBytes(String.valueOf(number) + "\n");
                 }
             } catch (IOException ex) {
-                System.out.println("Qualcosa è andato storto :(");
+                System.out.println("Client non raggiungibile");
             }
         }
         
