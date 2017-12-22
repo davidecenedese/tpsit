@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tombola;
 
 import java.io.BufferedReader;
@@ -14,9 +9,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+/**
+ *
+ * @authors Cenedese, Stella
+ */
 public class Server extends Thread implements Runnable{
 
     ServerSocket server = null;
