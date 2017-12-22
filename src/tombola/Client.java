@@ -26,7 +26,7 @@ public class Client {
     DataOutputStream outToServer;
     BufferedReader inFromServer;
 
-    int card[][];
+    String card[][];
 
     public Socket connect() {
 
@@ -52,30 +52,14 @@ public class Client {
 
     public void receiveCard() {
 
-        card = new int[3][5];
+        card = new String[3][5];
 
         try {
 
             String[] numbers = inFromServer.readLine().split("\\.");
-            List<Integer> list = new ArrayList<Integer>();
 
-            // riempimento cartella della tombola con i numeri ricevuti dal server
-            int val = 0;
-            for (int i = 0; i < 3; i++) {
-                for (int k = 0; k < 5; k++) {
-                    card[i][k] = Integer.parseInt(numbers[val]);
-                    list.add(card[i][k]);
-                    val++;
-                }
-            }
-
-            System.out.println("CARTELLA");
-            for (int i = 0; i < 3; i++) {
-                for (int k = 0; k < 5; k++) {
-                    System.out.print("[" + card[i][k] + "]");
-                }
-                System.out.println("");
-            }
+            sortCard(numbers);
+            printCard();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -90,14 +74,47 @@ public class Client {
             String inFromServerString;
             while (!(inFromServerString = inFromServer.readLine()).equals("FINE")) {
                 int randomNumber = Integer.parseInt(inFromServerString);
-                System.out.println(randomNumber);
+                System.out.println("Numero estratto: " + randomNumber);
+                checkNumber(randomNumber);
+                printCard();
             }
-            Thread.sleep(1000);
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
         }
+    }
+
+    public void sortCard(String[] numbers) {
+        List<String> list = new ArrayList<>();
+
+        int val = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int k = 0; k < 5; k++) {
+                card[i][k] = numbers[val];
+                list.add(card[i][k]);
+                val++;
+            }
+        }
+    }
+
+    public void checkNumber(int number){
+        for (int i = 0; i < 3; i++) {
+            for (int k = 0; k < 5; k++) {
+                if(card[i][k].equals(String.valueOf(number))){
+                    card[i][k] = "X";
+                }
+            }
+        }
+    }
+    
+    public void printCard() {
+        System.out.println("CARTELLA");
+        for (int i = 0; i < 3; i++) {
+            for (int k = 0; k < 5; k++) {
+                System.out.print("[" + (String.format( "%2s", card[i][k]))  + "]");
+            }
+            System.out.println("");
+        }
+        System.out.println("");
     }
 
 }
