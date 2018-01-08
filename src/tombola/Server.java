@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -154,19 +156,50 @@ public class Server extends Thread implements Runnable {
     }
 
     public int extractNumber(List<Socket> clients) {
-        int number;
+        Socket winner = null;
+        int number = 0;
+        boolean bingo = false;
         Random rand = new Random();
-        while(numbers[(number = rand.nextInt(90) + 1)-1] != 0){}
-        
 
-        numbers[number - 1] = number;
-        try {
-            for (Socket client : clients) {
-                outToClient = new DataOutputStream(client.getOutputStream());
-                outToClient.writeBytes(String.valueOf(number) + "\n");
+        for (Socket client : clients) {
+            try {
+                inFromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                String read = inFromClient.readLine();
+                if (read.equals("TOMBOLA")) {
+                    bingo = true;
+                    winner = client;
+                    break;
+                }
+
+            } catch (IOException ex) {
             }
-        } catch (IOException ex) {
-            System.out.println("Client non raggiungibile");
+        }
+
+        if (!bingo) {
+            while (numbers[(number = rand.nextInt(90) + 1) - 1] != 0) {
+            }
+
+            numbers[number - 1] = number;
+            try {
+                for (Socket client : clients) {
+                    outToClient = new DataOutputStream(client.getOutputStream());
+                    outToClient.writeBytes(String.valueOf(number) + "\n");
+                }
+            } catch (IOException ex) {
+                System.out.println("Client non raggiungibile");
+            }
+        } else {
+            try {
+                outToClient = new DataOutputStream(winner.getOutputStream());
+                outToClient.writeBytes("SHUTDOWN\n");
+                inFromClient = new BufferedReader(new InputStreamReader(winner.getInputStream()));
+                
+                System.out.println("L'host " + winner.toString() + " ha fatto tombola");
+                
+                if(inFromClient.readLine().equals("OK")){
+                    System.exit(0);
+                }
+            } catch (IOException ex) {}
         }
 
         return number;
