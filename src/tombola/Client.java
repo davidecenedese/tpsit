@@ -69,23 +69,30 @@ public class Client {
         }
     }
 
-    public void receiveNumbers() {
-
+    public void receiveNumbers() {        
         try {
+            outToServer.writeBytes("READY\n");
+            
             String inFromServerString;
-            while (!(inFromServerString = inFromServer.readLine()).equals("FINE")) {
+            while (!(inFromServerString = inFromServer.readLine()).equals("SHUTDOWN")) {
                 int randomNumber = Integer.parseInt(inFromServerString);
                 System.out.println("Numero estratto: " + randomNumber);
                 checkNumber(randomNumber);
                 printCard();
                 System.out.print(checkWin());
                 if(bingo == true){
-                    System.exit(0);
+                    outToServer.writeBytes("TOMBOLA\n");
+                }else{
+                    outToServer.writeBytes(inFromServerString + "\n");
                 }
             }
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            
+            outToServer.writeBytes("OK\n");
+            Thread.sleep(100);
+            System.exit(0);
+            
+        } catch (IOException ex) {}
+        catch (InterruptedException ex) {}
     }
 
     public void sortCard(String[] numbers) {
