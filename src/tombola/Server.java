@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -26,14 +27,16 @@ public class Server extends Thread implements Runnable {
     DataOutputStream outToClient;
     String serverString = null;
     BufferedReader keyboard;
-    List<String> list;
+    List<ClientData> cards;
     Boolean firstBox;
     int nBoxes;
     int[] numbers;
+    int[] firstWin = new int[4];
+    boolean bingo = false;
 
     public Server(Socket socket) {
         this.client = socket;
-        this.list = new ArrayList<>();
+        this.cards = new ArrayList<ClientData>();
         firstBox = true;
         nBoxes = 0;
         numbers = new int[90];
@@ -68,8 +71,8 @@ public class Server extends Thread implements Runnable {
                     equalBoxes = false;
                     firstBox = false;
                 } else {
-                    for (int i = 0; i < list.size(); i++) {
-                        equalBoxes = list.get(i).equals(arrayToString);
+                    for (int i = 0; i < cards.size(); i++) {
+                        equalBoxes = cards.get(i).equals(arrayToString);
                         if (equalBoxes == true) {
                             break;
                         }
@@ -77,7 +80,8 @@ public class Server extends Thread implements Runnable {
                 }
             } while (equalBoxes);
             //aggiungo casella alla lista
-            list.add(arrayToString);
+            cards.add(new ClientData(client, buildCard(arrayToString)));
+
             System.out.println(++nBoxes + ": " + arrayToString);
             //invio la casella al client
             outToClient.writeBytes(arrayToString + '\n');
@@ -165,10 +169,48 @@ public class Server extends Thread implements Runnable {
             try {
                 inFromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 String read = inFromClient.readLine();
-                if (read.equals("TOMBOLA")) {
-                    bingo = true;
-                    winner = client;
-                    break;
+
+                switch (read) {
+                    case "TOMBOLA":
+                        bingo = true;
+                        winner = client;
+                        break;
+                    case "AMBO":
+                        for (int i = 0; i < cards.size(); i++) {
+                            if (cards.get(i).getSocket() == client) {
+                                if (checkWin(cards.get(i).getCard()).equals("AMBO\n")) {
+                                    System.out.println("Il client " + client + " ha fatto " + read);
+                                }
+                            }
+                        }
+                        break;
+                    case "TERNA":
+                        for (int i = 0; i < cards.size(); i++) {
+                            if (cards.get(i).getSocket() == client) {
+                                if (checkWin(cards.get(i).getCard()).equals("TERNA\n")) {
+                                    System.out.println("Il client " + client + " ha fatto " + read);
+                                }
+                            }
+                        }
+                        break;
+                    case "QUATERNA":
+                        for (int i = 0; i < cards.size(); i++) {
+                            if (cards.get(i).getSocket() == client) {
+                                if (checkWin(cards.get(i).getCard()).equals("QUATERNA\n")) {
+                                    System.out.println("Il client " + client + " ha fatto " + read);
+                                }
+                            }
+                        }
+                        break;
+                    case "CINQUINA":
+                        for (int i = 0; i < cards.size(); i++) {
+                            if (cards.get(i).getSocket() == client) {
+                                if (checkWin(cards.get(i).getCard()).equals("CINQUINA\n")) {
+                                    System.out.println("Il client " + client + " ha fatto " + read);
+                                }
+                            }
+                        }
+                        break;
                 }
 
             } catch (IOException ex) {
@@ -190,18 +232,91 @@ public class Server extends Thread implements Runnable {
             }
         } else {
             try {
-                outToClient = new DataOutputStream(winner.getOutputStream());
-                outToClient.writeBytes("SHUTDOWN\n");
-                inFromClient = new BufferedReader(new InputStreamReader(winner.getInputStream()));
-                
-                System.out.println("L'host " + winner.toString() + " ha fatto tombola");
-                
-                if(inFromClient.readLine().equals("OK")){
-                    System.exit(0);
+                for (Socket client : clients) {
+                    outToClient = new DataOutputStream(client.getOutputStream());
+                    outToClient.writeBytes("SHUTDOWN\n");
+                    inFromClient = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+                    System.out.println("Il client " + winner.toString() + " ha fatto TOMBOLA");
+
+                    if (inFromClient.readLine().equals("OK")) {
+                        outToClient.writeBytes("Il client " + winner.toString() + " ha fatto TOMBOLA\n");
+                        Thread.sleep(100);
+                        System.exit(0);
+                    }
                 }
             } catch (IOException ex) {}
+            catch (InterruptedException ex) {}
         }
 
         return number;
+    }
+
+    public String checkWin(String[][] card) {
+        int count = 0;
+        int bingo = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int k = 0; k < 5; k++) {
+                for (int j = 0; j < numbers.length; j++) {
+                    if (card[i][k].equals(String.valueOf(numbers[j]))) {
+                        count++;
+                        bingo++;
+                    }
+                }
+            }
+
+            switch (count) {
+                case 2:
+                    firstWin[0]++;
+                    if (firstWin[0] == 1) {
+                        return "AMBO\n";
+                    }
+                    break;
+                case 3:
+                    firstWin[1]++;
+                    if (firstWin[1] == 1) {
+                        return "TERNA\n";
+                    }
+                    break;
+                case 4:
+                    firstWin[2]++;
+                    if (firstWin[2] == 1) {
+                        return "QUATERNA\n";
+                    }
+                    break;
+                case 5:
+                    firstWin[3]++;
+                    if (firstWin[3] == 1) {
+                        return "CINQUINA\n";
+                    }
+                    break;
+            }
+
+            count = 0;
+        }
+
+        if (bingo == 15) {
+            this.bingo = true;
+            return "TOMBOLA\n";
+        } else {
+            bingo = 0;
+        }
+
+        return "";
+    }
+
+    public String[][] buildCard(String stringToArray) {
+        String[] numbers = stringToArray.split("\\.");
+
+        String[][] card = new String[3][5];
+
+        int val = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int k = 0; k < 5; k++) {
+                card[i][k] = numbers[val];
+                val++;
+            }
+        }
+        return card;
     }
 }
