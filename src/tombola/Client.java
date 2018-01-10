@@ -69,30 +69,36 @@ public class Client {
         }
     }
 
-    public void receiveNumbers() {        
+    public void receiveNumbers() {
         try {
             outToServer.writeBytes("READY\n");
-            
+
             String inFromServerString;
             while (!(inFromServerString = inFromServer.readLine()).equals("SHUTDOWN")) {
                 int randomNumber = Integer.parseInt(inFromServerString);
                 System.out.println("Numero estratto: " + randomNumber);
                 checkNumber(randomNumber);
                 printCard();
-                System.out.print(checkWin());
-                if(bingo == true){
-                    outToServer.writeBytes("TOMBOLA\n");
-                }else{
+                String checkResult = checkWin();
+                System.out.print(checkResult + "\n");
+                if (!checkResult.equals("")) {
+                    outToServer.writeBytes(checkResult);
+                } else {
                     outToServer.writeBytes(inFromServerString + "\n");
                 }
             }
-            
+
             outToServer.writeBytes("OK\n");
-            Thread.sleep(100);
-            System.exit(0);
-            
-        } catch (IOException ex) {}
-        catch (InterruptedException ex) {}
+            if (bingo) {
+                Thread.sleep(100);
+                System.exit(0);
+            }else{
+                System.out.println(inFromServer.readLine());
+            }
+
+        } catch (IOException ex) {
+        } catch (InterruptedException ex) {
+        }
     }
 
     public void sortCard(String[] numbers) {
@@ -132,25 +138,25 @@ public class Client {
                 case 2:
                     firstWin[0]++;
                     if (firstWin[0] == 1) {
-                        return "AMBO\n\n";
+                        return "AMBO\n";
                     }
                     break;
                 case 3:
                     firstWin[1]++;
                     if (firstWin[1] == 1) {
-                        return "TERNA\n\n";
+                        return "TERNA\n";
                     }
                     break;
                 case 4:
                     firstWin[2]++;
                     if (firstWin[2] == 1) {
-                        return "QUATERNA\n\n";
+                        return "QUATERNA\n";
                     }
                     break;
                 case 5:
                     firstWin[3]++;
                     if (firstWin[3] == 1) {
-                        return "CINQUINA\n\n";
+                        return "CINQUINA\n";
                     }
                     break;
             }
@@ -160,11 +166,11 @@ public class Client {
 
         if (bingo == 15) {
             this.bingo = true;
-            return "*** TOMBOLA ***\n\n";
+            return "TOMBOLA\n";
         } else {
             bingo = 0;
         }
-        
+
         return "";
     }
 
